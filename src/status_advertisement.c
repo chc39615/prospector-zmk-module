@@ -132,14 +132,12 @@ static atomic_t burst_remaining = ATOMIC_INIT(0);
 // static uint8_t latest_layer = 0;
 
 // Peripheral battery tracking for split keyboards
-#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE) && IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 static uint8_t peripheral_batteries[3] = {0, 0, 0}; // Up to 3 peripheral devices
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE) && IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 static int peripheral_battery_listener(const zmk_event_t *eh);
 
 ZMK_LISTENER(prospector_peripheral_battery, peripheral_battery_listener);
 ZMK_SUBSCRIPTION(prospector_peripheral_battery, zmk_peripheral_battery_state_changed);
-#else
-static uint8_t peripheral_batteries[3] = {0, 0, 0}; // Dummy for non-split-ble builds
 #endif
 
 // Activity-based update system: key presses trigger high-frequency updates
