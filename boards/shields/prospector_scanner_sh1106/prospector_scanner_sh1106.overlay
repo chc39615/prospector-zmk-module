@@ -16,9 +16,6 @@
         input-gpios = <&xiao_d 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
     };
 
-    aliases {
-        led0 = &backlight;
-    };
 };
 
 &zephyr_udc0 {
