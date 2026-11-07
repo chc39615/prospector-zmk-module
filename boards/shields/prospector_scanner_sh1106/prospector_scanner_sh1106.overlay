@@ -1,0 +1,70 @@
+/*
+ * Prospector Scanner - SH1106 128x64 I2C (minimal)
+ */
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,display = &sh1106;
+        zephyr,display = &sh1106;
+        zephyr,console = &cdc_acm_uart;
+    };
+
+    kscan0: kscan {
+        compatible = "zmk,kscan-gpio-direct";
+        wakeup-source;
+        input-gpios = <&xiao_d 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+    };
+
+    aliases {
+        led0 = &backlight;
+    };
+};
+
+&zephyr_udc0 {
+    cdc_acm_uart: cdc_acm_uart {
+        compatible = "zephyr,cdc-acm-uart";
+    };
+};
+
+/* I2C0 for SH1106 (and optional touch/sensor) */
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 4)>,  /* D4 = P0.04 = SDA */
+                    <NRF_PSEL(TWIM_SCL, 0, 5)>;  /* D5 = P0.05 = SCL */
+        };
+    };
+
+    i2c0_sleep: i2c0_sleep {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 4)>,
+                    <NRF_PSEL(TWIM_SCL, 0, 5)>;
+            low-power-enable;
+        };
+    };
+};
+
+&i2c0 {
+    status = "okay";
+    compatible = "nordic,nrf-twim";
+    pinctrl-0 = <&i2c0_default>;
+    pinctrl-1 = <&i2c0_sleep>;
+    pinctrl-names = "default", "sleep";
+    clock-frequency = <400000>;  /* Fast mode 400kHz */
+
+    sh1106: sh1106@3c {
+        compatible = "sinowealth,sh1106";
+        reg = <0x3c>;
+        width = <128>;
+        height = <64>;
+        segment-offset = <0>;
+        page-offset = <0>;
+        display-offset = <0>;
+        multiplex-ratio = <63>;
+        segment-remap;
+        com-invdir;
+        inversion-on;
+        prechargep = <0x22>;
+    };
+};

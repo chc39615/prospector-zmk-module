@@ -1,0 +1,2 @@
+config SHIELD_PROSPECTOR_SCANNER_SH1106
+    def_bool $(shields_list_contains,prospector_scanner_sh1106)
