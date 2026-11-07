@@ -138,6 +138,8 @@ static int peripheral_battery_listener(const zmk_event_t *eh);
 
 ZMK_LISTENER(prospector_peripheral_battery, peripheral_battery_listener);
 ZMK_SUBSCRIPTION(prospector_peripheral_battery, zmk_peripheral_battery_state_changed);
+#else
+static uint8_t peripheral_batteries[3] = {0, 0, 0}; // Dummy for non-split-ble builds
 #endif
 
 // Activity-based update system: key presses trigger high-frequency updates
@@ -231,6 +233,7 @@ ZMK_LISTENER(prospector_layer_listener, layer_changed_listener);
 ZMK_SUBSCRIPTION(prospector_layer_listener, zmk_layer_state_changed);
 #endif
 
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL) || !IS_ENABLED(CONFIG_ZMK_SPLIT)
 // Modifier change listener for immediate advertisement updates
 // Triggers on both press AND release for responsive display updates
 // NOTE: No burst mode for modifiers - they change too frequently and burst
@@ -252,6 +255,7 @@ static int modifiers_changed_listener(const zmk_event_t *eh) {
 
 ZMK_LISTENER(prospector_modifiers_listener, modifiers_changed_listener);
 ZMK_SUBSCRIPTION(prospector_modifiers_listener, zmk_modifiers_state_changed);
+#endif
 
 // Activity state listener for sleep/wake handling
 // This ensures proper advertising restart after system sleep
